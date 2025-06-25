@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import type { DateRange } from 'react-day-picker';
-import { addDays, format } from 'date-fns';
+import { format } from 'date-fns';
 import { Calendar as CalendarIcon, Filter } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -11,16 +11,22 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { DashboardFilterState } from '@/app/(app)/dashboard/page';
 
-export function DashboardFilters() {
-  const [date, setDate] = React.useState<DateRange | undefined>(undefined);
+interface DashboardFiltersProps {
+  initialFilters: DashboardFilterState;
+  onApplyFilters: (filters: DashboardFilterState) => void;
+}
 
-  React.useEffect(() => {
-    setDate({
-      from: addDays(new Date(), -30),
-      to: new Date(),
-    });
-  }, []);
+export function DashboardFilters({ initialFilters, onApplyFilters }: DashboardFiltersProps) {
+  // Local state to manage form before applying
+  const [date, setDate] = React.useState<DateRange | undefined>(initialFilters.date);
+  const [namespace, setNamespace] = React.useState(initialFilters.namespace);
+  const [label, setLabel] = React.useState(initialFilters.label);
+
+  const handleApply = () => {
+    onApplyFilters({ date, namespace, label });
+  };
 
   return (
     <Card className="shadow-md">
@@ -70,7 +76,7 @@ export function DashboardFilters() {
           </Popover>
         </div>
         <div className="grid gap-1">
-          <Select>
+          <Select value={namespace} onValueChange={setNamespace}>
             <SelectTrigger className="w-full sm:w-[200px]">
               <SelectValue placeholder="All Namespaces" />
             </SelectTrigger>
@@ -85,7 +91,7 @@ export function DashboardFilters() {
           </Select>
         </div>
          <div className="grid gap-1">
-           <Select>
+           <Select value={label} onValueChange={setLabel}>
             <SelectTrigger className="w-full sm:w-[200px]">
               <SelectValue placeholder="All Labels" />
             </SelectTrigger>
@@ -97,7 +103,7 @@ export function DashboardFilters() {
             </SelectContent>
           </Select>
         </div>
-        <Button className="ml-auto">Apply</Button>
+        <Button className="ml-auto" onClick={handleApply}>Apply</Button>
       </CardContent>
     </Card>
   );

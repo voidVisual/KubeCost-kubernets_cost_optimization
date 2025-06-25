@@ -1,8 +1,29 @@
+'use client';
+
+import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, TrendingUp, Zap } from "lucide-react";
 import { MOCK_COST_DATA } from "@/lib/constants";
+import type { DashboardFilterState } from '@/app/(app)/dashboard/page';
 
-export function CostOverviewCards() {
+interface CostOverviewCardsProps {
+  filters: DashboardFilterState;
+}
+
+export function CostOverviewCards({ filters }: CostOverviewCardsProps) {
+  const [costData, setCostData] = React.useState(MOCK_COST_DATA);
+
+  React.useEffect(() => {
+    // This is just a mock effect to show interactivity.
+    // In a real app, you would fetch new data based on filters.
+    setCostData({
+      totalCost: MOCK_COST_DATA.totalCost * (Math.random() * 0.4 + 0.8), // Fluctuate between 80% and 120%
+      potentialSavings: MOCK_COST_DATA.potentialSavings * (Math.random() * 0.5 + 0.75),
+      optimizedResources: Math.floor(MOCK_COST_DATA.optimizedResources * (Math.random() * 0.3 + 0.85)),
+    });
+  }, [filters]);
+
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
   };
@@ -16,7 +37,7 @@ export function CostOverviewCards() {
         </CardHeader>
         <CardContent>
           <div className="text-3xl font-bold text-primary font-headline">
-            {formatCurrency(MOCK_COST_DATA.totalCost)}
+            {formatCurrency(costData.totalCost)}
           </div>
           <p className="text-xs text-muted-foreground pt-1">
             Current monthly cloud expenditure
@@ -30,7 +51,7 @@ export function CostOverviewCards() {
         </CardHeader>
         <CardContent>
           <div className="text-3xl font-bold text-accent font-headline">
-            {formatCurrency(MOCK_COST_DATA.potentialSavings)}
+            {formatCurrency(costData.potentialSavings)}
           </div>
           <p className="text-xs text-muted-foreground pt-1">
             Through optimization recommendations
@@ -44,7 +65,7 @@ export function CostOverviewCards() {
         </CardHeader>
         <CardContent>
           <div className="text-3xl font-bold text-primary font-headline">
-            {MOCK_COST_DATA.optimizedResources}
+            {costData.optimizedResources}
           </div>
           <p className="text-xs text-muted-foreground pt-1">
             Number of resources with applied optimizations

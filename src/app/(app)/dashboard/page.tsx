@@ -1,10 +1,35 @@
+'use client';
+
+import * as React from 'react';
+import type { DateRange } from 'react-day-picker';
+import { addDays } from 'date-fns';
+
 import { CostOverviewCards } from "@/components/dashboard/cost-overview-cards";
 import { CostDistributionChart } from "@/components/dashboard/cost-distribution-chart";
 import { DashboardFilters } from "@/components/dashboard/dashboard-filters";
 import { CostHeatmap } from "@/components/dashboard/cost-heatmap";
 import { SavingsOpportunities } from "@/components/dashboard/savings-opportunities";
 
+export interface DashboardFilterState {
+  date: DateRange | undefined;
+  namespace: string;
+  label: string;
+}
+
 export default function DashboardPage() {
+  const [filters, setFilters] = React.useState<DashboardFilterState>({
+    date: {
+      from: addDays(new Date(), -30),
+      to: new Date(),
+    },
+    namespace: 'all',
+    label: 'all',
+  });
+
+  const handleApplyFilters = (newFilters: DashboardFilterState) => {
+    setFilters(newFilters);
+  };
+
   return (
     <div className="container mx-auto py-2 space-y-8">
       <header>
@@ -14,16 +39,19 @@ export default function DashboardPage() {
         </p>
       </header>
       
-      <DashboardFilters />
+      <DashboardFilters 
+        initialFilters={filters}
+        onApplyFilters={handleApplyFilters}
+      />
 
       <section aria-labelledby="cost-overview-title">
         <h2 id="cost-overview-title" className="sr-only">Cost Overview</h2>
-        <CostOverviewCards />
+        <CostOverviewCards filters={filters} />
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <CostDistributionChart />
+          <CostDistributionChart filters={filters} />
         </div>
         <div>
           <SavingsOpportunities />

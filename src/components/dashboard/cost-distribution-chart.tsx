@@ -6,13 +6,16 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-  ChartLegend,
-  ChartLegendContent,
 } from '@/components/ui/chart';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MOCK_COST_BREAKDOWN_DATA, COST_CHART_CONFIG } from '@/lib/constants';
 import type { Icon } from 'lucide-react';
+import type { DashboardFilterState } from '@/app/(app)/dashboard/page';
+
+interface CostDistributionChartProps {
+  filters: DashboardFilterState;
+}
 
 type ChartDataType = {
   category: string;
@@ -21,9 +24,17 @@ type ChartDataType = {
   icon: Icon;
 };
 
-export function CostDistributionChart() {
+export function CostDistributionChart({ filters }: CostDistributionChartProps) {
   const [activeTab, setActiveTab] = React.useState<'namespace' | 'pod' | 'service'>('namespace');
-  const chartData = MOCK_COST_BREAKDOWN_DATA[activeTab];
+  
+  const chartData = React.useMemo(() => {
+    const dataForTab = MOCK_COST_BREAKDOWN_DATA[activeTab];
+    if (activeTab === 'namespace' && filters.namespace !== 'all') {
+      return dataForTab.filter(d => d.category === filters.namespace);
+    }
+    // Note: Pod/Service filtering logic would be more complex and is omitted for this example.
+    return dataForTab;
+  }, [activeTab, filters.namespace]);
 
   const CustomTooltipContent = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -48,7 +59,9 @@ export function CostDistributionChart() {
     <Card className="shadow-lg">
       <CardHeader>
         <CardTitle className="font-headline">Cost Distribution</CardTitle>
-        <CardDescription>Breakdown of costs by different Kubernetes resources.</CardDescription>
+        <CardDescription>Breakdown of costs by different Kubernetes resources. 
+          {filters.namespace !== 'all' && ` Filtered by namespace: ${filters.namespace}`}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="w-full">
