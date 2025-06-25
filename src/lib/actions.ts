@@ -11,11 +11,11 @@ export async function getResourceOptimizationAnalysisAction(
   const validatedFields = ResourceOptimizationAnalysisSchema.safeParse(values);
 
   if (!validatedFields.success) {
-    return { error: 'Invalid input: ' + validatedFields.error.flatten().fieldErrors.resourceData?.join(', ') };
+    return { error: 'Invalid input: ' + validatedFields.error.flatten().fieldErrors.namespace?.join(', ') };
   }
   
   const input: ResourceOptimizationAnalysisInput = {
-    resourceData: validatedFields.data.resourceData,
+    namespace: validatedFields.data.namespace,
   };
 
   try {
@@ -34,14 +34,12 @@ export async function getRightSizingRecommendationsAction(
 
   if (!validatedFields.success) {
      let errorMessages = [];
-     if(validatedFields.error.flatten().fieldErrors.currentResourceConfig) errorMessages.push("Config: " + validatedFields.error.flatten().fieldErrors.currentResourceConfig?.join(', '));
-     if(validatedFields.error.flatten().fieldErrors.resourceUtilizationData) errorMessages.push("Utilization: " + validatedFields.error.flatten().fieldErrors.resourceUtilizationData?.join(', '));
+     if(validatedFields.error.flatten().fieldErrors.deploymentName) errorMessages.push("Deployment Name: " + validatedFields.error.flatten().fieldErrors.deploymentName?.join(', '));
     return { error: 'Invalid input: ' + errorMessages.join('; ') };
   }
 
   const input: RightSizeRecommendationsInput = {
-    currentResourceConfig: validatedFields.data.currentResourceConfig,
-    resourceUtilizationData: validatedFields.data.resourceUtilizationData,
+    deploymentName: validatedFields.data.deploymentName,
     applicationDetails: validatedFields.data.applicationDetails,
   };
 

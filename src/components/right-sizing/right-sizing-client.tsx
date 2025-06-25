@@ -7,14 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { RightSizingRecommendationsSchema, type RightSizingRecommendationsFormData } from '@/lib/schemas';
 import { getRightSizingRecommendationsAction } from '@/lib/actions';
 import type { RightSizeRecommendationsOutput } from '@/ai/flows/right-sizing-recommendations';
-import { Loader2, CheckCircle, AlertTriangle, Lightbulb } from 'lucide-react';
+import { Loader2, Lightbulb } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { RIGHT_SIZING_SAMPLE_CONFIG, RIGHT_SIZING_SAMPLE_UTILIZATION } from '@/lib/constants';
 
 export function RightSizingClient() {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,8 +22,7 @@ export function RightSizingClient() {
   const form = useForm<RightSizingRecommendationsFormData>({
     resolver: zodResolver(RightSizingRecommendationsSchema),
     defaultValues: {
-      currentResourceConfig: '',
-      resourceUtilizationData: '',
+      deploymentName: '',
       applicationDetails: '',
     },
   });
@@ -58,8 +55,7 @@ export function RightSizingClient() {
         <CardHeader>
           <CardTitle className="font-headline">Get Right-Sizing Recommendations</CardTitle>
           <CardDescription>
-            Input your container's current configuration, utilization data, and application details (optional) to receive AI-powered right-sizing advice.
-            Use the sample data buttons to quickly populate the fields for testing.
+            Input your container's deployment name and optional application details to receive AI-powered right-sizing advice.
           </CardDescription>
         </CardHeader>
         <Form {...form}>
@@ -67,49 +63,22 @@ export function RightSizingClient() {
             <CardContent className="space-y-4">
               <FormField
                 control={form.control}
-                name="currentResourceConfig"
+                name="deploymentName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="currentResourceConfig">Current Resource Configuration (YAML)</FormLabel>
+                    <FormLabel htmlFor="deploymentName">Deployment Name</FormLabel>
                     <FormControl>
-                      <Textarea
-                        id="currentResourceConfig"
-                        placeholder="apiVersion: apps/v1..."
-                        rows={8}
-                        className="font-code"
+                      <Input
+                        id="deploymentName"
+                        placeholder="e.g., my-app-deployment"
                         {...field}
                       />
                     </FormControl>
-                     <Button type="button" variant="outline" size="sm" onClick={() => form.setValue('currentResourceConfig', RIGHT_SIZING_SAMPLE_CONFIG)} className="mt-1">
-                      Load Sample Config
-                    </Button>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="resourceUtilizationData"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="resourceUtilizationData">Resource Utilization Data (JSON)</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        id="resourceUtilizationData"
-                        placeholder='{"cpuUsage": {"avg": "250m", ...}}'
-                        rows={8}
-                        className="font-code"
-                        {...field}
-                      />
-                    </FormControl>
-                    <Button type="button" variant="outline" size="sm" onClick={() => form.setValue('resourceUtilizationData', RIGHT_SIZING_SAMPLE_UTILIZATION)} className="mt-1">
-                      Load Sample Utilization
-                    </Button>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
+               <FormField
                 control={form.control}
                 name="applicationDetails"
                 render={({ field }) => (
@@ -126,6 +95,9 @@ export function RightSizingClient() {
                   </FormItem>
                 )}
               />
+              <Button type="button" variant="outline" size="sm" onClick={() => form.setValue('deploymentName', 'my-app')}>
+                Load Sample Deployment Name
+              </Button>
             </CardContent>
             <CardFooter>
               <Button type="submit" disabled={isLoading} className="w-full md:w-auto">

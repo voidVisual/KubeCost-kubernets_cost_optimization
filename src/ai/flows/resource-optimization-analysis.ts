@@ -10,13 +10,10 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getClusterUtilizationForAnalysis } from '@/services/k8s-service';
 
 const ResourceOptimizationAnalysisInputSchema = z.object({
-  resourceData: z
-    .string()
-    .describe(
-      'Kubernetes resource utilization data in JSON format, including CPU, memory, and network usage for each namespace, pod, and service.'
-    ),
+  namespace: z.string().describe("The Kubernetes namespace to analyze. Use 'all' for a cluster-wide analysis."),
 });
 export type ResourceOptimizationAnalysisInput = z.infer<
   typeof ResourceOptimizationAnalysisInputSchema
@@ -43,9 +40,17 @@ export async function resourceOptimizationAnalysis(
   return resourceOptimizationAnalysisFlow(input);
 }
 
+const ResourceOptimizationAnalysisPromptInputSchema = z.object({
+  resourceData: z
+    .string()
+    .describe(
+      'Kubernetes resource utilization data in JSON format, including CPU, memory, and network usage for each namespace, pod, and service.'
+    ),
+});
+
 const prompt = ai.definePrompt({
   name: 'resourceOptimizationAnalysisPrompt',
-  input: {schema: ResourceOptimizationAnalysisInputSchema},
+  input: {schema: ResourceOptimizationAnalysisPromptInputSchema},
   output: {schema: ResourceOptimizationAnalysisOutputSchema},
   prompt: `You are an expert Kubernetes cost optimizer. Analyze the provided Kubernetes resource utilization data and identify potential cost savings. Provide a summary of your analysis, an estimate of potential cost savings, and specific recommendations for right-sizing containers and optimizing resource requests.
 
@@ -59,7 +64,8 @@ const resourceOptimizationAnalysisFlow = ai.defineFlow(
     outputSchema: ResourceOptimizationAnalysisOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const resourceData = await getClusterUtilizationForAnalysis(input.namespace);
+    const {output} = await prompt({ resourceData });
     return output!;
   }
 );

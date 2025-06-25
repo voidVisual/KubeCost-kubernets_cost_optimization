@@ -6,13 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { ResourceOptimizationAnalysisSchema, type ResourceOptimizationAnalysisFormData } from '@/lib/schemas';
 import { getResourceOptimizationAnalysisAction } from '@/lib/actions';
 import type { ResourceOptimizationAnalysisOutput } from '@/ai/flows/resource-optimization-analysis';
-import { Loader2, CheckCircle, AlertTriangle } from 'lucide-react';
-import { RESOURCE_OPTIMIZATION_SAMPLE_DATA } from '@/lib/constants';
+import { Loader2, CheckCircle } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export function ResourceAnalysisClient() {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +21,7 @@ export function ResourceAnalysisClient() {
   const form = useForm<ResourceOptimizationAnalysisFormData>({
     resolver: zodResolver(ResourceOptimizationAnalysisSchema),
     defaultValues: {
-      resourceData: '',
+      namespace: 'all',
     },
   });
 
@@ -54,8 +53,7 @@ export function ResourceAnalysisClient() {
         <CardHeader>
           <CardTitle className="font-headline">Analyze Resource Utilization</CardTitle>
           <CardDescription>
-            Provide your Kubernetes resource utilization data in JSON format to get optimization insights.
-            You can use the sample data below to test the functionality.
+            Select a Kubernetes namespace to analyze and get AI-driven optimization insights.
           </CardDescription>
         </CardHeader>
         <Form {...form}>
@@ -63,26 +61,29 @@ export function ResourceAnalysisClient() {
             <CardContent className="space-y-4">
               <FormField
                 control={form.control}
-                name="resourceData"
+                name="namespace"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="resourceData">Resource Utilization Data (JSON)</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        id="resourceData"
-                        placeholder='e.g., {"namespaces": [{"name": "prod", "cpuUsage": "..."}]}'
-                        rows={10}
-                        className="font-code"
-                        {...field}
-                      />
-                    </FormControl>
+                    <FormLabel>Namespace</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a namespace to analyze" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="all">All Namespaces</SelectItem>
+                        <SelectItem value="production">production</SelectItem>
+                        <SelectItem value="staging">staging</SelectItem>
+                        <SelectItem value="kube-system">kube-system</SelectItem>
+                        <SelectItem value="monitoring">monitoring</SelectItem>
+                        <SelectItem value="default">default</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-               <Button type="button" variant="outline" size="sm" onClick={() => form.setValue('resourceData', RESOURCE_OPTIMIZATION_SAMPLE_DATA)}>
-                Load Sample Data
-              </Button>
             </CardContent>
             <CardFooter>
               <Button type="submit" disabled={isLoading} className="w-full md:w-auto">

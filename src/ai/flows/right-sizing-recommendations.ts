@@ -1,4 +1,3 @@
-// src/ai/flows/right-sizing-recommendations.ts
 'use server';
 
 /**
@@ -11,18 +10,10 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getCurrentResourceConfig, getResourceUtilizationData } from '@/services/k8s-service';
 
 const RightSizeRecommendationsInputSchema = z.object({
-  currentResourceConfig: z
-    .string()
-    .describe(
-      'The current Kubernetes resource configuration in YAML format, including CPU and memory requests and limits.'
-    ),
-  resourceUtilizationData: z
-    .string()
-    .describe(
-      'Resource utilization data from monitoring tools like Prometheus, including CPU and memory usage over time, as a JSON string.'
-    ),
+  deploymentName: z.string().describe('The name of the Kubernetes deployment to analyze.'),
   applicationDetails: z
     .string()
     .optional()
@@ -57,22 +48,41 @@ export async function rightSizeRecommendations(
   return rightSizeRecommendationsFlow(input);
 }
 
+const RightSizingPromptInputSchema = z.object({
+  currentResourceConfig: z
+    .string()
+    .describe(
+      'The current Kubernetes resource configuration in YAML format, including CPU and memory requests and limits.'
+    ),
+  resourceUtilizationData: z
+    .string()
+    .describe(
+      'Resource utilization data from monitoring tools like Prometheus, including CPU and memory usage over time, as a JSON string.'
+    ),
+  applicationDetails: z
+    .string()
+    .optional()
+    .describe(
+      'Optional details about the application running in the container, such as its type, workload characteristics, and performance requirements.'
+    ),
+});
+
 const prompt = ai.definePrompt({
   name: 'rightSizeRecommendationsPrompt',
-  input: {schema: RightSizeRecommendationsInputSchema},
+  input: {schema: RightSizingPromptInputSchema},
   output: {schema: RightSizeRecommendationsOutputSchema},
   prompt: `You are an AI-powered Kubernetes resource optimization expert. Your task is to analyze the current resource configuration and utilization data of a container and provide recommendations for right-sizing it to minimize resource waste and improve efficiency.
 
   Here's the current resource configuration (in YAML format):
-  \{\{\{currentResourceConfig\}\}\}
+  {{{currentResourceConfig}}}
 
   Here's the resource utilization data (as a JSON string):
-  \{\{\{resourceUtilizationData\}\}\}
+  {{{resourceUtilizationData}}}
 
-  \{\{\{#if applicationDetails\}\}\}
+  {{#if applicationDetails}}
   Here are the details about the application running in the container:
-  \{\{\{applicationDetails\}\}\}
-  \{\{\{/if\}\}\}
+  {{{applicationDetails}}}
+  {{/if}}
 
   Based on this information, provide clear and actionable recommendations for right-sizing the container. Include suggested CPU and memory requests and limits (in YAML format), a confidence score (0-1) for the recommendations, and a detailed justification for your recommendations.
 
@@ -87,7 +97,16 @@ const rightSizeRecommendationsFlow = ai.defineFlow(
     outputSchema: RightSizeRecommendationsOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const [currentResourceConfig, resourceUtilizationData] = await Promise.all([
+        getCurrentResourceConfig(input.deploymentName),
+        getResourceUtilizationData(input.deploymentName)
+    ]);
+
+    const {output} = await prompt({
+        currentResourceConfig,
+        resourceUtilizationData,
+        applicationDetails: input.applicationDetails
+    });
     return output!;
   }
 );
