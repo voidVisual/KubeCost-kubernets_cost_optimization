@@ -20,6 +20,11 @@ export const NAV_ITEMS = [
     label: 'Dashboard',
   },
   {
+    href: '/workloads/pods',
+    icon: Server,
+    label: 'Workloads',
+  },
+  {
     href: '/resource-optimization',
     icon: SlidersHorizontal,
     label: 'Resource Optimization',
