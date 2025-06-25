@@ -154,3 +154,56 @@ export const RIGHT_SIZING_SAMPLE_UTILIZATION = `{
     "p95": "750Mi"
   }
 }`;
+
+export const MOCK_CLUSTER_METRICS_DATA = [
+  { date: '2024-07-01', cpu: 65, memory: 70 },
+  { date: '2024-07-02', cpu: 68, memory: 72 },
+  { date: '2024-07-03', cpu: 70, memory: 75 },
+  { date: '2024-07-04', cpu: 72, memory: 78 },
+  { date: '2024-07-05', cpu: 75, memory: 80 },
+  { date: '2024-07-06', cpu: 73, memory: 79 },
+  { date: '2024-07-07', cpu: 78, memory: 82 },
+  { date: '2024-07-08', cpu: 80, memory: 85 },
+  { date: '2024-07-09', cpu: 79, memory: 84 },
+  { date: '2024-07-10', cpu: 82, memory: 88 },
+  { date: '2024-07-11', cpu: 85, memory: 90 },
+  { date: '2024-07-12', cpu: 83, memory: 89 },
+];
+
+export const MOCK_WORKLOAD_METRICS_DATA: { [key: string]: any[] } = {
+  'webapp-prod': [
+    { time: '10:00', cpu: 250, memory: 512 },
+    { time: '10:05', cpu: 260, memory: 520 },
+    { time: '10:10', cpu: 255, memory: 515 },
+    { time: '10:15', cpu: 270, memory: 530 },
+    { time: '10:20', cpu: 265, memory: 525 },
+    { time: '10:25', cpu: 280, memory: 540 },
+  ],
+  'api-server': [
+    { time: '10:00', cpu: 400, memory: 1024 },
+    { time: '10:05', cpu: 410, memory: 1030 },
+    { time: '10:10', cpu: 420, memory: 1040 },
+    { time: '10:15', cpu: 415, memory: 1035 },
+    { time: '10:20', cpu: 430, memory: 1050 },
+    { time: '10:25', cpu: 425, memory: 1045 },
+  ],
+  'data-processor': [
+    { time: '10:00', cpu: 800, memory: 2048 },
+    { time: '10:05', cpu: 850, memory: 2100 },
+    { time: '10:10', cpu: 900, memory: 2200 },
+    { time: '10:15', cpu: 870, memory: 2150 },
+    { time: '10:20', cpu: 920, memory: 2250 },
+    { time: '10:25', cpu: 910, memory: 2230 },
+  ]
+};
+
+
+export const CLUSTER_CHART_CONFIG = {
+  cpu: { label: 'CPU Usage (%)', color: 'hsl(var(--chart-1))' },
+  memory: { label: 'Memory Usage (%)', color: 'hsl(var(--chart-2))' },
+} satisfies ChartConfig;
+
+export const WORKLOAD_CHART_CONFIG = {
+  cpu: { label: 'CPU (mCores)', color: 'hsl(var(--chart-4))' },
+  memory: { label: 'Memory (MiB)', color: 'hsl(var(--chart-5))' },
+} satisfies ChartConfig;

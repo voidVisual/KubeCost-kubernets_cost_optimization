@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Activity, RadioTower, Link, CheckCircle, XCircle } from "lucide-react";
 import * as React from "react";
+import { ClusterResourceChart } from "@/components/monitoring/cluster-resource-chart";
+import { WorkloadMonitoringChart } from "@/components/monitoring/workload-monitoring-chart";
 
 const integrations = [
   {
@@ -86,68 +87,70 @@ export default function MonitoringIntegrationPage() {
     };
 
   return (
-    <div className="container mx-auto py-2">
-      <header className="mb-8">
+    <div className="container mx-auto py-2 space-y-8">
+      <header className="mb-4">
         <h1 className="text-3xl font-bold tracking-tight font-headline text-primary">Monitoring Integration</h1>
         <p className="text-muted-foreground mt-1">
-          Connect KubeCostOptimizer with your monitoring systems for real-time data.
+          Connect KubeCostOptimizer with your monitoring systems and view live metrics.
         </p>
       </header>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {integrations.map((tool) => {
-            const isConnected = statuses[tool.name] === 'connected';
-            return (
-              <Card key={tool.name} className="shadow-lg hover:shadow-xl transition-shadow flex flex-col">
-                <CardHeader className="flex flex-row items-start gap-4">
-                  <div>{tool.icon}</div>
-                  <div className="flex-1">
-                    <CardTitle className="font-headline text-2xl">{tool.name}</CardTitle>
-                    <CardDescription>{tool.description}</CardDescription>
-                  </div>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  {isConnected ? (
-                     <div className="flex items-center text-sm text-green-600 bg-green-50 p-2 rounded-md border border-green-200">
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        <span>Status: Connected</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center text-sm text-muted-foreground bg-muted/50 p-2 rounded-md border">
-                        <XCircle className="h-4 w-4 mr-2" />
-                        <span>Status: Not Connected</span>
-                    </div>
-                  )}
-                </CardContent>
-                <CardFooter>
-                  <Button 
-                    className="w-full" 
-                    variant={isConnected ? "destructive" : "default"}
-                    onClick={() => handleConnectToggle(tool.name)}
-                  >
-                    <Link className="h-4 w-4 mr-2" />
-                    {isConnected ? "Disconnect" : "Connect"}
-                  </Button>
-                </CardFooter>
-              </Card>
-            )
-        })}
-      </div>
+      <section aria-labelledby="monitoring-charts-title" className="space-y-8">
+        <h2 id="monitoring-charts-title" className="sr-only">Monitoring Charts</h2>
+        <ClusterResourceChart />
+        <WorkloadMonitoringChart />
+      </section>
 
-       <Card className="shadow-lg mt-12 bg-muted/20">
+      <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="font-headline flex items-center gap-2">
-            <Activity className="h-6 w-6 text-primary" />
-            How It Works
+            <RadioTower className="h-6 w-6 text-primary" />
+            Connect Your Tools
           </CardTitle>
+           <CardDescription>
+            This page is a demonstration of how KubeCostOptimizer would connect to external monitoring tools.
+           </CardDescription>
         </CardHeader>
-        <CardContent className="text-muted-foreground space-y-2">
-           <p>
-            This page is a demonstration of how KubeCostOptimizer would connect to external monitoring tools. In a real-world scenario, clicking "Connect" would initiate an OAuth flow or prompt for API keys to securely access your data.
-           </p>
-           <p>
-            Once connected, KubeCostOptimizer would periodically fetch utilization metrics to power the dashboards and provide accurate, real-time cost analysis and savings recommendations.
-           </p>
+        <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+                {integrations.map((tool) => {
+                    const isConnected = statuses[tool.name] === 'connected';
+                    return (
+                    <Card key={tool.name} className="shadow-md hover:shadow-lg transition-shadow flex flex-col">
+                        <CardHeader className="flex flex-row items-start gap-4">
+                        <div>{tool.icon}</div>
+                        <div className="flex-1">
+                            <CardTitle className="font-headline text-xl">{tool.name}</CardTitle>
+                            <CardDescription className="text-xs">{tool.description}</CardDescription>
+                        </div>
+                        </CardHeader>
+                        <CardContent className="flex-grow">
+                        {isConnected ? (
+                            <div className="flex items-center text-sm text-green-600 bg-green-50 p-2 rounded-md border border-green-200">
+                                <CheckCircle className="h-4 w-4 mr-2" />
+                                <span>Status: Connected</span>
+                            </div>
+                        ) : (
+                            <div className="flex items-center text-sm text-muted-foreground bg-muted/50 p-2 rounded-md border">
+                                <XCircle className="h-4 w-4 mr-2" />
+                                <span>Status: Not Connected</span>
+                            </div>
+                        )}
+                        </CardContent>
+                        <CardFooter>
+                        <Button 
+                            className="w-full" 
+                            variant={isConnected ? "destructive" : "default"}
+                            onClick={() => handleConnectToggle(tool.name)}
+                        >
+                            <Link className="h-4 w-4 mr-2" />
+                            {isConnected ? "Disconnect" : "Connect"}
+                        </Button>
+                        </CardFooter>
+                    </Card>
+                    )
+                })}
+            </div>
         </CardContent>
       </Card>
     </div>
