@@ -11,7 +11,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <SidebarHeader className="p-4 border-b border-sidebar-border">
            <Link href="/dashboard" className="flex items-center gap-2 text-lg font-semibold text-sidebar-foreground">
             <Flame className="h-7 w-7 text-primary" />
-            <span className="font-headline text-xl tracking-tight group-data-[collapsible=icon]:hidden">KubeCost</span>
+            <span className="font-headline text-xl tracking-tight group-data-[collapsible=icon]:hidden">KubeCostOptimizer</span>
           </Link>
         </SidebarHeader>
         <SidebarContent>
