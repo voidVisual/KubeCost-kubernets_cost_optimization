@@ -1,0 +1,34 @@
+services:
+  web:
+    build:
+      context: .
+      args:
+        # This will be used by the Next.js client to call the Genkit API
+        # It needs to be the address of the genkit service from the perspective
+        # of the user's browser, not from within the Docker network.
+        NEXT_PUBLIC_GENKIT_API_HOST: "http://localhost:4000"
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+    depends_on:
+      - genkit
+    networks:
+      - app-network
+
+  genkit:
+    build: .
+    ports:
+      - "4000:4000"
+    environment:
+      # This allows Genkit to listen on all available network interfaces
+      - GENKIT_SERVER_HOST=0.0.0.0
+      - PORT=4000
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+    command: npm run genkit:watch
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
