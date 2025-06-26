@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import type { DateRange } from 'react-day-picker';
-import { addDays } from 'date-fns';
+import { addDays, set } from 'date-fns';
 
 import { CostOverviewCards } from "@/components/dashboard/cost-overview-cards";
 import { CostDistributionChart } from "@/components/dashboard/cost-distribution-chart";
@@ -18,20 +18,29 @@ export interface DashboardFilterState {
 
 export default function DashboardPage() {
   const [filters, setFilters] = React.useState<DashboardFilterState>({
-    date: {
-      from: addDays(new Date(), -30),
-      to: new Date(),
-    },
+    date: undefined,
     namespace: 'all',
     label: 'all',
   });
+
+  React.useEffect(() => {
+    // Set initial date on client to avoid hydration errors
+    setFilters(prev => ({
+        ...prev,
+        date: {
+            from: addDays(new Date(), -30),
+            to: new Date(),
+        }
+    }));
+  }, []);
+
 
   const handleApplyFilters = (newFilters: DashboardFilterState) => {
     setFilters(newFilters);
   };
 
   return (
-    <div className="container mx-auto py-2 space-y-8">
+    <div className="container mx-auto p-4 md:p-6 lg:p-8 space-y-8">
       <header>
         <h1 className="text-3xl font-bold tracking-tight font-headline text-primary">Dashboard</h1>
         <p className="text-muted-foreground mt-1">

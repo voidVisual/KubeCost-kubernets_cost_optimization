@@ -4,7 +4,7 @@ import { FileText } from "lucide-react";
 
 export default function SavingsReportsPage() {
   return (
-    <div className="container mx-auto py-2">
+    <div className="container mx-auto p-4 md:p-6 lg:p-8">
       <header className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight font-headline text-primary">Savings Reports</h1>
         <p className="text-muted-foreground mt-1">
