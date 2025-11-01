@@ -9,7 +9,7 @@
 
 ---
 
-## 🚀 Introduction
+## Introduction
 
 **KubeCostOptimizer** is a modern, AI-driven dashboard designed to provide real-time cost visibility and resource efficiency insights for Kubernetes clusters. Built with Next.js, Genkit, and Docker, this tool helps you stop guessing, start optimizing, and slash your cloud bill by up to 60% with actionable, AI-powered recommendations.
 
@@ -17,7 +17,7 @@ This project was built to demonstrate a production-grade, feature-rich applicati
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 - **Live Interactive Dashboard**: Get a real-time, at-a-glance view of your cluster's financial health with dynamic charts and cards.
 - **AI-Powered Recommendations**: Leverage the power of Google's Genkit AI to receive actionable right-sizing and resource optimization suggestions.
@@ -29,7 +29,7 @@ This project was built to demonstrate a production-grade, feature-rich applicati
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer              | Tech Stack                                     |
 | ------------------ | ---------------------------------------------- |
@@ -42,7 +42,7 @@ This project was built to demonstrate a production-grade, feature-rich applicati
 
 ---
 
-## 🏁 Getting Started
+## Getting Started
 
 Follow these instructions to get a local copy up and running for development and testing purposes.
 
@@ -88,7 +88,7 @@ Follow these instructions to get a local copy up and running for development and
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 The repository is structured as a standard Next.js application:
 
