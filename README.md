@@ -1,7 +1,11 @@
 # KubeCostOptimizer: AI-Powered Kubernetes Cost Management Dashboard
 
 ![KubeCostOptimizer Dashboard](images/p1.png)
-*A snapshot of the main dashboard, showcasing real-time cost analytics.*
+![](images/p2.png)
+
+
+![](images/p3.png)
+
 
 ---
 
