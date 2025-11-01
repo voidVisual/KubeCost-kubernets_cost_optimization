@@ -1,6 +1,6 @@
 # KubeCostOptimizer: AI-Powered Kubernetes Cost Management Dashboard
 
-![KubeCostOptimizer Dashboard](https://placehold.co/1200x600.png)
+![KubeCostOptimizer Dashboard](images/p1.png)
 *A snapshot of the main dashboard, showcasing real-time cost analytics.*
 
 ---
