@@ -57,8 +57,8 @@ Follow these instructions to get a local copy up and running for development and
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/kubecostoptimizer.git
-    cd kubecostoptimizer
+    git clone https://github.com/voidVisual/KubeCost-kubernets_cost_optimization.git
+    cd KubeCost-kubernets_cost_optimization
     ```
 
 2.  **Create an environment file:**
